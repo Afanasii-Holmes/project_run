@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'type']
+        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'type']
 
     def get_type(self, obj):
         if obj.is_staff:
