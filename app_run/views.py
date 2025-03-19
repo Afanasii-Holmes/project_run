@@ -1,7 +1,10 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.filters import SearchFilter
+from rest_framework.views import APIView
+
 from .models import Run
 from .serializers import RunSerializer, UserSerializer
 from django.contrib.auth.models import User
@@ -12,6 +15,7 @@ def company_details(request):
     return Response({'company_name': 'Лососи и барабаны',
                      'slogan':'Табуретки навсегда',
                      'contacts': 'Тел. 222-232-3222'})
+
 
 class RunViewSet(viewsets.ModelViewSet):
     queryset = Run.objects.select_related('athlete').all()
@@ -32,3 +36,15 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if user_type and user_type=='athlete':
             qs = qs.filter(is_staff=False)
         return qs
+
+
+class StatusStartView(APIView):
+    def post(self, request, run_id):
+        run = get_object_or_404(Run, id=run_id)
+        return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
+
+
+class StatusStopView(APIView):
+    def post(self, request, run_id):
+        run = get_object_or_404(Run, id=run_id)
+        return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
