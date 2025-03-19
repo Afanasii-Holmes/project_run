@@ -41,10 +41,22 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class StatusStartView(APIView):
     def post(self, request, run_id):
         run = get_object_or_404(Run, id=run_id)
-        return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
+        if run.status == 'init':
+            run.status = 'in_progress'
+            run.save()
+            return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Этот забег стартовать нельзя, он уже стартовал'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class StatusStopView(APIView):
     def post(self, request, run_id):
         run = get_object_or_404(Run, id=run_id)
-        return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
+        if run.status == 'in_progress':
+            run.status = 'finished'
+            run.save()
+            return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Этот забег финишировать нельзя, он еще не стартовал или уже завершен'},
+                            status=status.HTTP_400_BAD_REQUEST)
