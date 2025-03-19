@@ -13,7 +13,7 @@ def company_details(request):
                      'contacts': 'Тел. 222-232-3222'})
 
 class RunViewSet(viewsets.ModelViewSet):
-    queryset = Run.objects.all()
+    queryset = Run.objects.select_related('athlete').all()
     serializer_class = RunSerializer
 
 
