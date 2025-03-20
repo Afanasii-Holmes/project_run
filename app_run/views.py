@@ -29,8 +29,16 @@ class RunViewSet(viewsets.ModelViewSet):
     serializer_class = RunSerializer
     pagination_class = RunPagination
 
+
+class UserPagination(PageNumberPagination):
+    page_size = 6  # Количество объектов на странице по умолчанию
+    page_size_query_param = 'size'
+    max_page_size = 12
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
+    pagination_class = UserPagination
     queryset = User.objects.filter(is_superuser=False)
     filter_backends = [SearchFilter]
     search_fields = ['first_name', 'last_name']
