@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.filters import SearchFilter
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Run
 from .serializers import RunSerializer, UserSerializer
@@ -17,10 +18,14 @@ def company_details(request):
                      'contacts': 'Тел. 222-232-3222'})
 
 
+class RunPagination(PageNumberPagination):
+    page_size = 6  # Количество объектов на странице
+
+
 class RunViewSet(viewsets.ModelViewSet):
     queryset = Run.objects.select_related('athlete').all()
     serializer_class = RunSerializer
-
+    pagination_class = RunPagination
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
@@ -60,3 +65,4 @@ class StatusStopView(APIView):
         else:
             return Response({'message': 'Этот забег финишировать нельзя, он еще не стартовал или уже завершен'},
                             status=status.HTTP_400_BAD_REQUEST)
+
