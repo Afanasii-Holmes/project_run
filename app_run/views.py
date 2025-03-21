@@ -29,7 +29,7 @@ class RunViewSet(viewsets.ModelViewSet):
     serializer_class = RunSerializer
     pagination_class = MyPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['status']
+    filterset_fields = ['status', 'athlete']
     ordering_fields = ['created_at']
 
 
