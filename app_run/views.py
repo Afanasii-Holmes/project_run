@@ -39,8 +39,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     pagination_class = MyPagination
     queryset = User.objects.filter(is_superuser=False)
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['first_name', 'last_name']
+    ordering_fields = ['id']
 
     def get_queryset(self):
         qs = self.queryset
