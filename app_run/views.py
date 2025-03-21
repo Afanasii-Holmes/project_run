@@ -6,6 +6,8 @@ from rest_framework.filters import SearchFilter
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import Run
 from .serializers import RunSerializer, UserSerializer
 from django.contrib.auth.models import User
@@ -18,8 +20,8 @@ def company_details(request):
                      'contacts': 'Тел. 222-232-3222'})
 
 
-class RunPagination(PageNumberPagination):
-    page_size = 2  # Количество объектов на странице по умолчанию
+class MyPagination(PageNumberPagination):
+    page_size = 6  # Количество объектов на странице по умолчанию
     page_size_query_param = 'size'
     max_page_size = 12
 
@@ -27,18 +29,14 @@ class RunPagination(PageNumberPagination):
 class RunViewSet(viewsets.ModelViewSet):
     queryset = Run.objects.select_related('athlete').all()
     serializer_class = RunSerializer
-    pagination_class = RunPagination
-
-
-class UserPagination(PageNumberPagination):
-    page_size = 2  # Количество объектов на странице по умолчанию
-    page_size_query_param = 'size'
-    max_page_size = 12
+    pagination_class = MyPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['status']
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
-    pagination_class = UserPagination
+    pagination_class = MyPagination
     queryset = User.objects.filter(is_superuser=False)
     filter_backends = [SearchFilter]
     search_fields = ['first_name', 'last_name']
