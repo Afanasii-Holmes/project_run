@@ -21,14 +21,7 @@ def company_details(request):
 
 
 class MyPagination(PageNumberPagination):
-    page_size = 6  # Количество объектов на странице по умолчанию
     page_size_query_param = 'size'
-    max_page_size = 12
-
-    def paginate_queryset(self, queryset, request, view=None):
-        if self.page_size_query_param not in request.query_params:
-            return None  # Отключаем пагинацию, если size не передан
-        return super().paginate_queryset(queryset, request, view)
 
 
 class RunViewSet(viewsets.ModelViewSet):
