@@ -74,3 +74,6 @@ class StatusStopView(APIView):
             return Response({'message': 'Этот забег финишировать нельзя, он еще не стартовал или уже завершен'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+
+class AthleteInfoView(APIView):
+    pass
