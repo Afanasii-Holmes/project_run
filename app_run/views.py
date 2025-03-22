@@ -8,7 +8,7 @@ from rest_framework.pagination import PageNumberPagination
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Run
+from .models import Run, AthleteInfo
 from .serializers import RunSerializer, UserSerializer
 from django.contrib.auth.models import User
 
@@ -76,4 +76,31 @@ class StatusStopView(APIView):
 
 
 class AthleteInfoView(APIView):
-    pass
+
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        athlete_info, created = AthleteInfo.objects.get_or_create(user=user)
+        return Response({'weight': athlete_info.weight,
+                         'goals': athlete_info.goals,
+                         'user_id': athlete_info.user.id
+
+        })
+
+    def put(self, request, user_id):
+        goals = request.data.get('goals')
+        weight = request.data.get('weight')
+
+        if not str(weight).isdigit() or int(weight) < 0:
+            return Response({'message': 'weight должен быть числом больше 0'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(id=user_id).exists():
+            user = User.objects.get(id=user_id)
+        else:
+            return Response({'message':'Такого User не существует'}, status=status.HTTP_404_NOT_FOUND)
+
+        athlete_info, created = AthleteInfo.objects.update_or_create(
+            user = user,
+            defaults = {'goals':goals, 'weight':weight}
+        )
+
+        return Response({'message': 'Создано/изменено'}, status=status.HTTP_201_CREATED)
