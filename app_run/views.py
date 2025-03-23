@@ -119,3 +119,10 @@ class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
 class PositionViewSet(viewsets.ModelViewSet):
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
+
+    def get_queryset(self):
+        qs = self.queryset
+        run_id = self.request.query_params.get('run')
+        if run_id:
+            qs = qs.filter(run=run_id)
+        return qs
