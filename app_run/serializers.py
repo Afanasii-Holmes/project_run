@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Run, Challenge
+from .models import Run, Challenge, Position
 from django.contrib.auth.models import User
 
 
@@ -39,4 +39,10 @@ class UserSerializer(serializers.ModelSerializer):
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
+        fields = '__all__'
+
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
         fields = '__all__'

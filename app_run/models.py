@@ -28,3 +28,9 @@ class Challenge(models.Model):
 
     def __str__(self):
         return f'{self.athlete} - {self.full_name}'
+
+
+class Position(models.Model):
+    latitude = models.DecimalField(decimal_places=4, max_digits=7)
+    longitude = models.DecimalField(decimal_places=4, max_digits=8)
+    run = models.ForeignKey(Run, on_delete=models.CASCADE)

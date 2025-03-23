@@ -8,8 +8,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Run, AthleteInfo, Challenge
-from .serializers import RunSerializer, UserSerializer, ChallengeSerializer
+from .models import Run, AthleteInfo, Challenge, Position
+from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer
 from django.contrib.auth.models import User
 
 
@@ -114,3 +114,8 @@ class AthleteInfoView(APIView):
 class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
+
+
+class PositionViewSet(viewsets.ModelViewSet):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
