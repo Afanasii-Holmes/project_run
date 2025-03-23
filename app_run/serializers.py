@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Run
+from .models import Run, Challenge
 from django.contrib.auth.models import User
 
 
@@ -34,3 +34,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_runs_finished(self, obj):
         result = obj.run_set.filter(status='finished').count()
         return result
+
+
+class ChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = '__all__'

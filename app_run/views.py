@@ -8,8 +8,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Run, AthleteInfo
-from .serializers import RunSerializer, UserSerializer
+from .models import Run, AthleteInfo, Challenge
+from .serializers import RunSerializer, UserSerializer, ChallengeSerializer
 from django.contrib.auth.models import User
 
 
@@ -69,6 +69,11 @@ class StatusStopView(APIView):
         if run.status == 'in_progress':
             run.status = 'finished'
             run.save()
+            # -------------------------------------------
+            if Run.objects.filter(status='finished', athlete=run.athlete).count() >= 10:
+                challenge, created = Challenge.objects.get_or_create(full_name='Сделай 10 Забегов!',
+                                                                     athlete=run.athlete)
+            # -------------------------------------------
             return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Этот забег финишировать нельзя, он еще не стартовал или уже завершен'},
@@ -104,3 +109,8 @@ class AthleteInfoView(APIView):
         )
 
         return Response({'message': 'Создано/изменено'}, status=status.HTTP_201_CREATED)
+
+
+class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Challenge.objects.all()
+    serializer_class = ChallengeSerializer
