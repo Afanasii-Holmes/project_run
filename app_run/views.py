@@ -90,8 +90,8 @@ class AthleteInfoView(APIView):
         goals = request.data.get('goals')
         weight = request.data.get('weight')
 
-        if not str(weight).isdigit() or int(weight) < 0:
-            return Response({'message': 'weight должен быть числом больше 0'}, status=status.HTTP_400_BAD_REQUEST)
+        if not str(weight).isdigit() or int(weight) < 0 or int(weight) > 900:
+            return Response({'message': 'weight должен быть числом больше 0 и меньше 900'}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(id=user_id).exists():
             user = User.objects.get(id=user_id)
