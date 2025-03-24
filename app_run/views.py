@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -81,6 +82,12 @@ class StatusStopView(APIView):
             # -------------------------------------------
             if Run.objects.filter(status='finished', athlete=run.athlete).count() >= 10:
                 challenge, created = Challenge.objects.get_or_create(full_name='Сделай 10 Забегов!',
+                                                                     athlete=run.athlete)
+            # -------------------------------------------
+            distance_sum = Run.objects.filter(status='finished', athlete=run.athlete).aggregate(Sum('distance'))
+
+            if distance_sum['distance__sum'] >= 50:
+                challenge, created = Challenge.objects.get_or_create(full_name='Пробеги 50 километров!',
                                                                      athlete=run.athlete)
             # -------------------------------------------
             return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
