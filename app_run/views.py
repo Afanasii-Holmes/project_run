@@ -130,6 +130,8 @@ class AthleteInfoView(APIView):
 class ChallengeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['athlete']
 
 
 class PositionViewSet(viewsets.ModelViewSet):
