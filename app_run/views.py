@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Run, AthleteInfo, Challenge, Position
 from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer
 from django.contrib.auth.models import User
+from geopy.distance import geodesic
 
 
 @api_view(['GET'])
@@ -68,6 +69,14 @@ class StatusStopView(APIView):
         run = get_object_or_404(Run, id=run_id)
         if run.status == 'in_progress':
             run.status = 'finished'
+            # -------------------------------------------
+            positions_qs = Position.objects.filter(run=run_id)
+            positions_quantity = len(positions_qs)
+            distance = 0
+            for i in range(positions_quantity-1):
+                distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).kilometers
+            run.distance = distance
+            # -------------------------------------------
             run.save()
             # -------------------------------------------
             if Run.objects.filter(status='finished', athlete=run.athlete).count() >= 10:
