@@ -9,8 +9,9 @@ from rest_framework.pagination import PageNumberPagination
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Run, AthleteInfo, Challenge, Position
-from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer
+from .models import Run, AthleteInfo, Challenge, Position, CollectibleItem
+from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer, \
+    CollectibleItemSerializer
 from django.contrib.auth.models import User
 from geopy.distance import geodesic
 
@@ -144,3 +145,13 @@ class PositionViewSet(viewsets.ModelViewSet):
         if run_id:
             qs = qs.filter(run=run_id)
         return qs
+
+
+class CollectibleItemViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CollectibleItem.objects.all()
+    serializer_class = CollectibleItemSerializer
+
+
+@api_view(['POST'])
+def upload_view(request):
+    pass

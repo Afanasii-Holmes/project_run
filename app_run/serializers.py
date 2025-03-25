@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Run, Challenge, Position
+from .models import Run, Challenge, Position, CollectibleItem
 from django.contrib.auth.models import User
 
 
@@ -63,3 +63,8 @@ class PositionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('longitude должен быть в диапазоне от -180.0 до +180.0 градусов')
         return value
 
+
+class CollectibleItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollectibleItem
+        fields = '__all__'

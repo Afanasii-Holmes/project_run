@@ -44,3 +44,12 @@ class Position(models.Model):
 
     def __str__(self):
         return f'{self.run} - {self.latitude} - {self.longitude}'
+
+
+class CollectibleItem(models.Model):
+    name = models.CharField(max_length=200, default='')
+    uid = models.CharField(max_length=200, default='')
+    latitude = models.DecimalField(decimal_places=4, max_digits=7)
+    longitude = models.DecimalField(decimal_places=4, max_digits=8)
+    picture = models.URLField()
+    value = models.IntegerField(null=True)
