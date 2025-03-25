@@ -14,6 +14,7 @@ from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, Pos
     CollectibleItemSerializer
 from django.contrib.auth.models import User
 from geopy.distance import geodesic
+import openpyxl as op
 
 
 @api_view(['GET'])
@@ -154,4 +155,31 @@ class CollectibleItemViewSet(viewsets.ReadOnlyModelViewSet):
 
 @api_view(['POST'])
 def upload_view(request):
-    pass
+    if request.method == 'POST' and request.FILES.get('file'):
+        uploaded_xlsx_file = request.FILES['file']
+        wb = op.load_workbook(uploaded_xlsx_file, data_only=True)
+        sheet = wb.active
+        wrong_rows_list = []
+        for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, values_only=True):
+            name, uid, value, latitude, longitude, picture = row
+            data = {
+                'name': name,
+                'uid': uid,
+                'latitude': latitude,
+                'longitude': longitude,
+                'picture': picture,
+                'value': value,
+            }
+            serializer = CollectibleItemSerializer(data=data)
+            if serializer.is_valid():
+                CollectibleItem.objects.create(name=name,
+                                               uid=uid,
+                                               value=value,
+                                               latitude=latitude,
+                                               longitude=longitude,
+                                               picture=picture)
+            else:
+                wrong_rows_list.append([name, uid, value, latitude, longitude, picture])
+
+        return Response(wrong_rows_list)
+    return Response([])
