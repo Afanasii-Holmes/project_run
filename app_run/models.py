@@ -38,8 +38,8 @@ class Challenge(models.Model):
 
 
 class Position(models.Model):
-    latitude = models.DecimalField(decimal_places=4, max_digits=7)
-    longitude = models.DecimalField(decimal_places=4, max_digits=8)
+    latitude = models.DecimalField(decimal_places=6, max_digits=9)
+    longitude = models.DecimalField(decimal_places=6, max_digits=10)
     run = models.ForeignKey(Run, on_delete=models.CASCADE)
 
     def __str__(self):
