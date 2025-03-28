@@ -53,3 +53,7 @@ class CollectibleItem(models.Model):
     longitude = models.DecimalField(decimal_places=4, max_digits=8)
     picture = models.URLField()
     value = models.IntegerField(null=True)
+    users = models.ManyToManyField(User, blank=True, related_name='collectibleitems')
+
+    def __str__(self):
+        return f"{self.name} - {self.value}"
