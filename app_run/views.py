@@ -40,7 +40,7 @@ class RunViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     pagination_class = MyPagination
-    queryset = User.objects.filter(is_superuser=False)
+    queryset = User.objects.filter(is_superuser=False).annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['first_name', 'last_name']
     ordering_fields = ['id']
@@ -52,7 +52,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(is_staff=True)
         if user_type and user_type=='athlete':
             qs = qs.filter(is_staff=False)
-        qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
+        # qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
         return qs
 
 

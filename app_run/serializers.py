@@ -34,7 +34,6 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
         return value
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     runs_finished = serializers.IntegerField()
