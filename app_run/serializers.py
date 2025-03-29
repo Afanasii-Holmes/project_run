@@ -37,7 +37,7 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
-    runs_finished = serializers.SerializerMethodField()
+    runs_finished = serializers.IntegerField()
     items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
 
     class Meta:
@@ -49,10 +49,6 @@ class UserSerializer(serializers.ModelSerializer):
             return 'coach'
         else:
             return 'athlete'
-
-    def get_runs_finished(self, obj):
-        result = obj.run_set.filter(status='finished').count()
-        return result
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
