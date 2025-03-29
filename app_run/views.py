@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -52,6 +52,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(is_staff=True)
         if user_type and user_type=='athlete':
             qs = qs.filter(is_staff=False)
+        qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
         return qs
 
 
@@ -72,18 +73,19 @@ class StatusStopView(APIView):
         run = get_object_or_404(Run, id=run_id)
         if run.status == 'in_progress':
             run.status = 'finished'
-            # -------------------------------------------
-            positions_qs = Position.objects.filter(run=run_id)
-            positions_quantity = len(positions_qs)
-            distance = 0
-            for i in range(positions_quantity-1):
-                distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).kilometers
-            run.distance = distance
-            # -------------------------------------------
-            positions_qs_sorted_by_date = positions_qs.order_by('date_time')
-            run_time = positions_qs_sorted_by_date[positions_quantity-1].date_time - positions_qs_sorted_by_date[0].date_time
-            run.run_time_seconds = run_time.total_seconds()
-            #-------------------------------------------
+            if Position.objects.filter(run=run_id).exists():
+                # -------------------------------------------
+                positions_qs = Position.objects.filter(run=run_id)
+                positions_quantity = len(positions_qs)
+                distance = 0
+                for i in range(positions_quantity-1):
+                    distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).kilometers
+                run.distance = distance
+                # -------------------------------------------
+                positions_qs_sorted_by_date = positions_qs.order_by('date_time')
+                run_time = positions_qs_sorted_by_date[positions_quantity-1].date_time - positions_qs_sorted_by_date[0].date_time
+                run.run_time_seconds = run_time.total_seconds()
+                #-------------------------------------------
             run.save()
             # -------------------------------------------
             if Run.objects.filter(status='finished', athlete=run.athlete).count() >= 10:
