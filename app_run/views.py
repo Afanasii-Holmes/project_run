@@ -53,7 +53,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if user_type and user_type=='athlete':
             qs = qs.filter(is_staff=False)
         qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
-        qs = qs.prefetch_related('collectibleitems')
+        # qs = qs.prefetch_related('collectibleitems')
         return qs
 
 
