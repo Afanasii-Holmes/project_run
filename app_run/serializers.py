@@ -72,10 +72,10 @@ class PositionSerializer(serializers.ModelSerializer):
 
         collectible_items = CollectibleItem.objects.all()
 
-        for item in collectible_items:
-            distance = geodesic((current_latitude,current_longitude), (item.latitude, item.longitude)).meters
-            if distance <= 100:
-                item.users.add(run.athlete)
+        # for item in collectible_items:
+        #     distance = geodesic((current_latitude,current_longitude), (item.latitude, item.longitude)).meters
+        #     if distance <= 100:
+        #         item.users.add(run.athlete)
 
         return data
 
