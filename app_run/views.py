@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Run, AthleteInfo, Challenge, Position, CollectibleItem
 from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer, \
-    CollectibleItemSerializer
+    CollectibleItemSerializer, UserDetailSerializer
 from django.contrib.auth.models import User
 from geopy.distance import geodesic
 import openpyxl as op
@@ -55,6 +55,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
         # qs = qs.prefetch_related('collectibleitems')
         return qs
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return UserSerializer
+        elif self.action == 'retrieve':
+            return UserDetailSerializer
+        return super().get_serializer_class()
 
 
 class StatusStartView(APIView):

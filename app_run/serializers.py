@@ -37,11 +37,10 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     runs_finished = serializers.SerializerMethodField()
-    items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'type', 'runs_finished', 'items']
+        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'type', 'runs_finished']
 
     def get_type(self, obj):
         if obj.is_staff:
@@ -94,3 +93,9 @@ class PositionSerializer(serializers.ModelSerializer):
         return value
 
 
+class UserDetailSerializer(UserSerializer):
+    items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ['items']
