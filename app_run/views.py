@@ -110,7 +110,7 @@ class StatusStopView(APIView):
             # -------------------------------------------
             if run.distance >= 2 and run.run_time_seconds <= 600:
                 challenge, created = Challenge.objects.get_or_create(
-                    full_name='Пробеги 2 километра меньше чем за 10 минут!',
+                    full_name='2 километра за 10 минут!',
                     athlete=run.athlete)
 
             return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
