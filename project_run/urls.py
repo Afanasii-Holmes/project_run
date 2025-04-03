@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from app_run.views import company_details, StatusStartView, StatusStopView, AthleteInfoView, ChallengeViewSet, \
-    PositionViewSet, CollectibleItemViewSet, upload_view
+    PositionViewSet, CollectibleItemViewSet, upload_view, SubscribeView
 from rest_framework.routers import DefaultRouter
 from app_run.views import RunViewSet, UserViewSet
 
@@ -35,5 +35,6 @@ urlpatterns = [
     path('api/runs/<int:run_id>/stop/', StatusStopView.as_view()),
     path('api/athlete_info/<int:user_id>/', AthleteInfoView.as_view()),
     path('api/upload_file/', upload_view),
+    path('api/subscribe_to_coach/<int:id>/', SubscribeView.as_view()),
     path('', include(router.urls))
     ]

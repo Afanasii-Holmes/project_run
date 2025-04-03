@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Run, AthleteInfo, Challenge, Position, CollectibleItem
+from .models import Run, AthleteInfo, Challenge, Position, CollectibleItem, Subscription
 from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer, \
     CollectibleItemSerializer, UserDetailSerializer
 from django.contrib.auth.models import User
@@ -221,3 +221,26 @@ def upload_view(request):
 
         return Response(wrong_rows_list)
     return Response([])
+
+
+class SubscribeView(APIView):
+    def post(self, request, id):
+        coach_id = id
+        athlete_id = self.request.data['athlete']
+
+        coach = get_object_or_404(User, id=coach_id)
+        if not User.objects.filter(id=athlete_id).exists():
+            return Response({'message': f'Пользователя c id {athlete_id} не существует'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        athlete=User.objects.get(id=athlete_id)
+
+        if not coach.is_staff:
+            return Response({'message': f'Пользователь c id {coach_id} это не тренер'}, status=status.HTTP_400_BAD_REQUEST)
+        if athlete.is_staff:
+            return Response({'message': f'Пользователь c id {coach_id} это не бегун'}, status=status.HTTP_400_BAD_REQUEST)
+        if Subscription.objects.filter(coach=coach, athlete=athlete).exists():
+            return Response({'message': 'Такая подписка уже существует'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        Subscription.objects.create(coach=coach, athlete=athlete)
+
+        return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
