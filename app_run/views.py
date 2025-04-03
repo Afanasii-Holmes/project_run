@@ -249,3 +249,22 @@ class SubscribeView(APIView):
         Subscription.objects.create(coach=coach, athlete=athlete)
 
         return Response({'message': 'Все ништяк'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def challenge_summary_view(request):
+    # Получим список уникальных названий челленджей
+    unique_challenges = Challenge.objects.values('full_name').distinct()
+    unique_name_list = [i['full_name'] for i in unique_challenges]
+
+    #Получим список атлетов для каждого челленджа
+    final_list = []
+    for challenge_name in unique_name_list:
+        user_queryset = User.objects.filter(challenge__full_name=challenge_name)
+        athletes_list = []
+        for athlete in user_queryset:
+            athletes_list.append({'id': athlete.id, 'full_name': f'{athlete.first_name} {athlete.last_name}'})
+
+        final_list.append({'name_to_display':challenge_name, 'athletes':athletes_list})
+
+    return Response(final_list)
