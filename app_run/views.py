@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Run, AthleteInfo, Challenge, Position, CollectibleItem, Subscription
 from .serializers import RunSerializer, UserSerializer, ChallengeSerializer, PositionSerializer, \
-    CollectibleItemSerializer, UserDetailSerializer
+    CollectibleItemSerializer, CoachSerializer, AthleteSerializer
 from django.contrib.auth.models import User
 from geopy.distance import geodesic
 import openpyxl as op
@@ -60,7 +60,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == 'list':
             return UserSerializer
         elif self.action == 'retrieve':
-            return UserDetailSerializer
+            # return UserDetailSerializer
+            user = self.get_object() # крутой метод! почему я его не знал!!
+            if user.is_staff:
+                return CoachSerializer
+            else:
+                return AthleteSerializer
         return super().get_serializer_class()
 
 

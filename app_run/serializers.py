@@ -1,6 +1,6 @@
 from geopy.distance import geodesic
 from rest_framework import serializers
-from .models import Run, Challenge, Position, CollectibleItem
+from .models import Run, Challenge, Position, CollectibleItem, Subscription
 from django.contrib.auth.models import User
 
 
@@ -89,9 +89,36 @@ class PositionSerializer(serializers.ModelSerializer):
         return value
 
 
-class UserDetailSerializer(UserSerializer):
-    items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
+# class UserDetailSerializer(UserSerializer):
+#     items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
+#
+#     class Meta:
+#         model = User
+#         fields = UserSerializer.Meta.fields + ['items']
 
-    class Meta:
-        model = User
-        fields = UserSerializer.Meta.fields + ['items']
+
+class AthleteSerializer(UserSerializer):
+    items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
+    coach = serializers.SerializerMethodField()
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ['coach', 'items']
+
+    def get_coach(self, obj):
+        if Subscription.objects.filter(athlete=obj.id).exists():
+            subscription = Subscription.objects.get(athlete=obj.id)
+            return subscription.coach.id
+        return ''
+
+
+class CoachSerializer(UserSerializer):
+    items = CollectibleItemSerializer(source='collectibleitems', many=True, read_only=True)
+    athletes = serializers.SerializerMethodField()
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ['athletes', 'items']
+
+    def get_athletes(self, obj):
+        #Возвращает пустой список если ничего не найдено удовлетворяющее фильтру
+        athletes_list = Subscription.objects.filter(coach=obj.id).values_list('athlete__id', flat=True)
+        return athletes_list
