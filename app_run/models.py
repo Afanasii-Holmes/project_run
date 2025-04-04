@@ -67,6 +67,7 @@ class CollectibleItem(models.Model):
 class Subscription(models.Model):
     coach = models.ForeignKey(User, on_delete=models.CASCADE, related_name='athletes')
     athlete = models.ForeignKey(User, on_delete=models.CASCADE, related_name='coaches')
+    rating = models.IntegerField(null=True)
 
     class Meta:
         unique_together = ['coach', 'athlete']  # Уникальность подписки между двумя пользователями.
