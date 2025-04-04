@@ -1,4 +1,4 @@
-from django.db.models import Sum, Count, Q, Avg
+from django.db.models import Sum, Count, Q, Avg, Max
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -302,3 +302,35 @@ class CoachRatingView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': 'ОК'})
+
+
+class AnalyticsCoachView(APIView):
+    def get(self, request, coach_id):
+        coach_queryset = Subscription.objects.filter(coach=coach_id)
+
+        qs_with_additional_fields = coach_queryset.annotate(
+            max_distance=Max('athlete__run__distance'),
+            sum_distances=Sum('athlete__run__distance'),
+            avg_speed=Avg('athlete__run__speed')
+        )
+
+        longest_qs = qs_with_additional_fields.order_by('-max_distance').first()
+        longest_run_value = longest_qs.max_distance
+        longest_run_user = longest_qs.athlete_id
+
+        max_total_run_qs = qs_with_additional_fields.order_by('-sum_distances').first()
+        total_run_value = max_total_run_qs.sum_distances
+        total_run_user = max_total_run_qs.athlete_id
+
+        max_avg_speed_qs = qs_with_additional_fields.order_by('-avg_speed').first()
+        speed_avg_value = max_avg_speed_qs.avg_speed
+        speed_avg_user = max_avg_speed_qs.athlete_id
+
+
+        return Response({'longest_run_value': longest_run_value,
+                         'longest_run_user': longest_run_user,
+                         'total_run_value': total_run_value,
+                         'total_run_user': total_run_user,
+                         'speed_avg_value': speed_avg_value,
+                         'speed_avg_user': speed_avg_user
+                         })
