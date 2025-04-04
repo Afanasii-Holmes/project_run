@@ -53,7 +53,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if user_type and user_type=='athlete':
             qs = qs.filter(is_staff=False)
         qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
-        # qs = qs.prefetch_related('collectibleitems')
+        qs = qs.annotate(rating=Avg('athletes__rating'))
         return qs
 
     def get_serializer_class(self):
@@ -269,3 +269,36 @@ def challenge_summary_view(request):
         final_list.append({'name_to_display':challenge_name, 'athletes':athletes_list})
 
     return Response(final_list)
+
+
+class CoachRatingView(APIView):
+    def post(self, request, coach_id):
+        athlete_id = request.data.get('athlete')
+        rating = request.data.get('rating')
+
+        user_coach = get_object_or_404(User, id=coach_id)
+
+        if not athlete_id:
+            return Response({'message': f'Нет поля athlete_id'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not rating:
+            return Response({'message': f'Нет поля rating'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if isinstance(rating, str) and not rating.isdigit():
+            return Response({'message': f'У вас rating не цифра. Ваше значение {rating}'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if not 1<= int(rating) <=5:
+            return Response({'message': f'rating не в пределах от 1 до 5. Ваше значение {rating}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_athlete = get_object_or_404(User, id=athlete_id)
+
+        if Subscription.objects.filter(coach=coach_id, athlete=athlete_id).exists():
+            subscription = Subscription.objects.get(coach=coach_id, athlete=athlete_id)
+            subscription.rating = rating
+            subscription.save()
+        else:
+            return Response({'message':f'Бегун c id {athlete_id} не подписан на тренера с id {coach_id}'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': 'ОК'})

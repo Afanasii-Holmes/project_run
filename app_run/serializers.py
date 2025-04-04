@@ -37,10 +37,11 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     runs_finished = serializers.IntegerField()
+    rating = serializers.FloatField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'type', 'runs_finished']
+        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'type', 'runs_finished', 'rating']
 
     def get_type(self, obj):
         if obj.is_staff:
