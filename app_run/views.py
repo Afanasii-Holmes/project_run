@@ -326,7 +326,6 @@ class AnalyticsCoachView(APIView):
         speed_avg_value = max_avg_speed_qs.avg_speed
         speed_avg_user = max_avg_speed_qs.athlete_id
 
-
         return Response({'longest_run_value': longest_run_value,
                          'longest_run_user': longest_run_user,
                          'total_run_value': total_run_value,
