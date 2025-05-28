@@ -173,22 +173,41 @@ class PositionViewSet(viewsets.ModelViewSet):
             qs = qs.filter(run=run_id)
         return qs
 
-    def perform_create(self, serializer):
-        run = serializer.validated_data['run']
-        serializer.save()  # чтобы включить только что создаваемую позицию в QS
-        all_positions = Position.objects.filter(run=run)
-        if all_positions.count() > 1:
-            ordered_positions = all_positions.order_by('-id')
-            last_position = ordered_positions[0]
-            previous_position = ordered_positions[1]
-            previous_distance = previous_position.distance
-            last_distance = geodesic((last_position.latitude, last_position.longitude),
-                                     (previous_position.latitude, previous_position.longitude)).meters
-            time_delta = last_position.date_time - previous_position.date_time
-            speed = last_distance / time_delta.total_seconds()
-            last_position.speed = round(speed, 2)
-            last_position.distance = round(previous_distance + last_distance / 1000, 2)
-            last_position.save()
+    # def perform_create(self, serializer): # Закомментировал 28 мая
+    #     run = serializer.validated_data['run']
+    #     serializer.save()  # чтобы включить только что создаваемую позицию в QS
+    #     all_positions = Position.objects.filter(run=run)
+    #     if all_positions.count() > 1:
+    #         ordered_positions = all_positions.order_by('-id')
+    #         last_position = ordered_positions[0]
+    #         previous_position = ordered_positions[1]
+    #         previous_distance = previous_position.distance
+    #         last_distance = geodesic((last_position.latitude, last_position.longitude),
+    #                                  (previous_position.latitude, previous_position.longitude)).meters
+    #         time_delta = last_position.date_time - previous_position.date_time
+    #         speed = last_distance / time_delta.total_seconds()
+    #         last_position.speed = round(speed, 2)
+    #         last_position.distance = round(previous_distance + last_distance / 1000, 2)
+    #         last_position.save()
+
+    def create(self, request, pk=None): # Добавил 28 мая
+        data = request.data
+        run_id = data.get("run", None)
+        try:
+            run = Run.objects.get(id=run_id)
+        except Run.DoesNotExist:
+            return Response(
+                {"detail": "Забег не найден"}, status.HTTP_400_BAD_REQUEST)
+        if run.status != "in_progress":
+            return Response(
+                {"detail": "Забег должен быть в статусе 'in_progress'"}, status.HTTP_400_BAD_REQUEST
+            )
+        serializer = PositionSerializer(run,data=data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            super().create(request, pk)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CollectibleItemViewSet(viewsets.ReadOnlyModelViewSet):

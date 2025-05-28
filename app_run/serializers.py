@@ -62,22 +62,22 @@ class PositionSerializer(serializers.ModelSerializer):
         model = Position
         fields = '__all__'
 
-    def validate(self, data):
-        run = data.get('run')
-        if run.status != 'in_progress':
-            raise serializers.ValidationError('Забег должен быть начат и еще не закончен')
-
-        current_latitude = data.get('latitude')
-        current_longitude = data.get('longitude')
-
-        collectible_items = CollectibleItem.objects.all()
-
-        for item in collectible_items:
-            distance = geodesic((current_latitude,current_longitude), (item.latitude, item.longitude)).meters
-            if distance <= 100:
-                item.users.add(run.athlete)
-
-        return data
+    # def validate(self, data): # Закомментировал 28 мая
+    #     run = data.get('run')
+    #     if run.status != 'in_progress':
+    #         raise serializers.ValidationError('Забег должен быть начат и еще не закончен')
+    #
+    #     current_latitude = data.get('latitude')
+    #     current_longitude = data.get('longitude')
+    #
+    #     collectible_items = CollectibleItem.objects.all()
+    #
+    #     for item in collectible_items:
+    #         distance = geodesic((current_latitude,current_longitude), (item.latitude, item.longitude)).meters
+    #         if distance <= 100:
+    #             item.users.add(run.athlete)
+    #
+    #     return data
 
     def validate_latitude(self, value):
         if value > 90 or value < -90:
