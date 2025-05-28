@@ -190,23 +190,55 @@ class PositionViewSet(viewsets.ModelViewSet):
     #         last_position.distance = round(previous_distance + last_distance / 1000, 2)
     #         last_position.save()
 
-    def create(self, request, pk=None): # Добавил 28 мая
+    # def create(self, request, pk=None): # Добавил 28 мая
+    #     data = request.data
+    #     run_id = data.get("run", None)
+    #     try:
+    #         run = Run.objects.get(id=run_id)
+    #     except Run.DoesNotExist:
+    #         return Response(
+    #             {"detail": "Забег не найден"}, status.HTTP_400_BAD_REQUEST)
+    #     if run.status != "in_progress":
+    #         return Response(
+    #             {"detail": "Забег должен быть в статусе 'in_progress'"}, status.HTTP_400_BAD_REQUEST
+    #         )
+    #     serializer = PositionSerializer(run,data=data,partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         super().create(request, pk)
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request, pk=None): # Claude version
         data = request.data
-        run_id = data.get("run", None)
+        run_id = data.get("run")
+
+        if not run_id:
+            return Response(
+                {"detail": "Поле 'run' обязательно"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             run = Run.objects.get(id=run_id)
         except Run.DoesNotExist:
             return Response(
-                {"detail": "Забег не найден"}, status.HTTP_400_BAD_REQUEST)
+                {"detail": "Забег не найден"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if run.status != "in_progress":
             return Response(
-                {"detail": "Забег должен быть в статусе 'in_progress'"}, status.HTTP_400_BAD_REQUEST
+                {"detail": "Забег должен быть в статусе 'in_progress'"},
+                status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = PositionSerializer(run,data=data,partial=True)
+
+        # Создаем Position, а не обновляем Run
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            super().create(request, pk)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
