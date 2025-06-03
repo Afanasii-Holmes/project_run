@@ -92,7 +92,7 @@ class StatusStopView(APIView):
                 positions_quantity = len(positions_qs)
                 distance = 0
                 for i in range(positions_quantity-1):
-                    distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).meters
+                    distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).kilometers
                 run.distance = distance
                 # -------------------------------------------
                 positions_qs_sorted_by_date = positions_qs.order_by('date_time')
