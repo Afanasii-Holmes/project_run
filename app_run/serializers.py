@@ -120,6 +120,6 @@ class CoachSerializer(UserSerializer):
         fields = UserSerializer.Meta.fields + ['athletes', 'items']
 
     def get_athletes(self, obj):
-        #Возвращает пустой список если ничего не найдено удовлетворяющее фильтру
+        #Возвращает пустой список, если ничего не найдено удовлетворяющее фильтру
         athletes_list = Subscription.objects.filter(coach=obj.id).values_list('athlete__id', flat=True)
         return athletes_list
