@@ -34,7 +34,7 @@ class RunViewSet(viewsets.ModelViewSet):
     pagination_class = MyPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status', 'athlete']
-    ordering_fields = ['date_joined']
+    ordering_fields = ['created_at']
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -43,7 +43,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(is_superuser=False)
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['first_name', 'last_name']
-    ordering_fields = ['id']
+    ordering_fields = ['date_joined']
 
     def get_queryset(self):
         qs = self.queryset
