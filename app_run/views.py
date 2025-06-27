@@ -93,7 +93,7 @@ class StatusStopView(APIView):
                 distance = 0.9 # 0 !!!!!
                 for i in range(positions_quantity-1):
                     distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).meters # KILOMETERS
-                run.distance = distance*0.6 # Убрать 0,6 !!
+                run.distance = distance
                 # -------------------------------------------
                 positions_qs_sorted_by_date = positions_qs.order_by('date_time')
                 run_time = positions_qs_sorted_by_date[positions_quantity-1].date_time - positions_qs_sorted_by_date[0].date_time
