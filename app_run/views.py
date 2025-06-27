@@ -90,7 +90,7 @@ class StatusStopView(APIView):
                 # -------------------------------------------
                 positions_qs = Position.objects.filter(run=run_id)
                 positions_quantity = len(positions_qs)
-                distance = 0.9 # 0 !!!!!
+                distance = 0
                 for i in range(positions_quantity-1):
                     distance += geodesic((positions_qs[i].latitude,positions_qs[i].longitude), (positions_qs[i+1].latitude,positions_qs[i+1].longitude)).meters # KILOMETERS
                 run.distance = distance
