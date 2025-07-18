@@ -11,7 +11,9 @@ class SmallUserSerializer(serializers.ModelSerializer):
 
 
 class RunSerializer(serializers.ModelSerializer):
-    athlete_data = SmallUserSerializer(source='athlete', read_only=True)
+    # athlete_data = SmallUserSerializer(source='athlete', read_only=True)
+    athlete_data = SmallUserSerializer()
+
 
     class Meta:
         model = Run
