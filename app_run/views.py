@@ -29,7 +29,9 @@ class MyPagination(PageNumberPagination):
 
 
 class RunViewSet(viewsets.ModelViewSet):
-    queryset = Run.objects.select_related('athlete').all()
+    # queryset = Run.objects.select_related('athlete').all()
+    queryset = Run.objects.first()
+
     serializer_class = RunSerializer
     pagination_class = MyPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter]
