@@ -10,7 +10,6 @@ class SmallUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name']
 
 
-
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = SmallUserSerializer(source='athlete', read_only=True)
 
