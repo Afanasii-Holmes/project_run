@@ -7,13 +7,13 @@ from django.contrib.auth.models import User
 class SmallUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name']
+        # fields = ['id', 'username', 'first_name', 'last_name']
+        fields = ['id', 'username', 'first_name']
+
 
 
 class RunSerializer(serializers.ModelSerializer):
-    # athlete_data = SmallUserSerializer(source='athlete', read_only=True)
-    athlete_data = SmallUserSerializer()
-
+    athlete_data = SmallUserSerializer(source='athlete', read_only=True)
 
     class Meta:
         model = Run
