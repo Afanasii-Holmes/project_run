@@ -8,7 +8,7 @@ class SmallUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = ['id', 'username', 'first_name', 'last_name']
-        fields = ['id', 'username', 'first_name']
+        fields = ['username', 'first_name']
 
 
 
