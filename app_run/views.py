@@ -60,8 +60,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
         qs = qs.annotate(rating=Avg('athletes__rating'))
         print('DEBUG qs', qs)
-        # return qs
-        return None
+        return qs
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -108,6 +107,8 @@ class StatusStopView(APIView):
                 #-------------------------------------------
                 average_speed = positions_qs.aggregate(Avg('speed'))
                 run.speed = round(average_speed['speed__avg'], 2)
+                run.speed += run.speed #
+                print('DEBUG average_speed', average_speed)
             run.save()
             # -------------------------------------------
             if Run.objects.filter(status='finished', athlete=run.athlete).count() >= 10:
