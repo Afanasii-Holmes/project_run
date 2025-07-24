@@ -19,7 +19,8 @@ import openpyxl as op
 
 @api_view(['GET'])
 def company_details(request):
-    return Response({'company_name': 'Лососи и барабаныы',
+    print('DEBUG Как дела?')
+    return Response({'company': 'Лососи и барабаны',
                      'slogan':'Табуретки навсегда',
                      'contacts': 'Тел. 222-232-3222'})
 
