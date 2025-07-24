@@ -107,7 +107,6 @@ class StatusStopView(APIView):
                 #-------------------------------------------
                 average_speed = positions_qs.aggregate(Avg('speed'))
                 run.speed = round(average_speed['speed__avg'], 2)
-                run.speed += run.speed #
                 print('DEBUG average_speed', average_speed)
             run.save()
             # -------------------------------------------
