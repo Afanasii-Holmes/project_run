@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(is_staff=False)
         qs = qs.annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
         qs = qs.annotate(rating=Avg('athletes__rating'))
-        print('DEBUG qs', qs)
+        print('DEBUG qs', qs[0])
         # return qs
         return None
 
