@@ -21,8 +21,8 @@ import openpyxl as op
 def company_details(request):
     print('DEBUG 123456789')
     print('DEBUG FFFFFFFFF')
-    return Response({'company_name_': 'Бегающие фантомасы',
-                     'slogan_':'Табуретки навсегда',
+    return Response({'company_name': 'Бегуны - фантомасы',
+                     'slogan':'Бег - это чудо!',
                      'contacts': 'Тел. 222-232-3222'})
 
 
